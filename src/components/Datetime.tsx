@@ -1,12 +1,32 @@
 import { LOCALE } from "@config";
 
 export interface Props {
-  datetime: string | Date;
+  datetime: string | Date | number;
   size?: "sm" | "lg";
   className?: string;
 }
 
+function parseDateFromYYYYMMDDHHMMSS(datetime: number) {
+  const year = datetime.toString().substring(0, 4);
+  const month = datetime.toString().substring(4, 6);
+  const day = datetime.toString().substring(6, 8);
+  const hours = datetime.toString().substring(8, 10);
+  const minutes = datetime.toString().substring(10, 12);
+  const seconds = datetime.toString().substring(12, 14);
+
+  return new Date(
+    parseInt(year),
+    parseInt(month) - 1, // 月份从0开始
+    parseInt(day),
+    parseInt(hours),
+    parseInt(minutes),
+    parseInt(seconds)
+  );
+}
+
 export default function Datetime({ datetime, size = "sm", className }: Props) {
+  const ctime = parseDateFromYYYYMMDDHHMMSS(datetime as number);
+
   return (
     <div className={`flex items-center space-x-2 opacity-80 ${className}`}>
       <svg
@@ -21,7 +41,7 @@ export default function Datetime({ datetime, size = "sm", className }: Props) {
       </svg>
       <span className="sr-only">Posted on:</span>
       <span className={`italic ${size === "sm" ? "text-sm" : "text-base"}`}>
-        <FormattedDatetime datetime={datetime} />
+        <FormattedDatetime datetime={ctime} />
       </span>
     </div>
   );
